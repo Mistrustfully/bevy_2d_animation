@@ -1,0 +1,49 @@
+pub mod components;
+mod systems;
+
+use bevy::prelude::*;
+use core::hash::Hash;
+use std::marker::PhantomData;
+
+// Trait Alias
+pub trait AnimationKey: Eq + Hash + Send + Sync + Copy + 'static {}
+impl<T> AnimationKey for T where T: Eq + Hash + Send + Sync + Copy + 'static {}
+
+pub struct AnimationPlayer<AnimationKeys: AnimationKey>(PhantomData<AnimationKeys>);
+impl<AnimationKeys: AnimationKey> Plugin for AnimationPlayer<AnimationKeys> {
+    fn is_unique(&self) -> bool {
+        false
+    }
+
+    fn name(&self) -> &str {
+        "AnimationPlayer"
+    }
+
+    fn build(&self, app: &mut App) {
+        app.add_system(systems::update_animations::<AnimationKeys>)
+            .add_system(systems::update_spritesheets::<AnimationKeys>);
+    }
+}
+
+impl<AnimationKeys: AnimationKey> AnimationPlayer<AnimationKeys> {
+    pub fn new() -> Self {
+        AnimationPlayer(PhantomData)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    // use crate::{components::AnimatorBuilder, AnimationPlayer};
+    // use bevy::prelude::*;
+
+    // #[derive(PartialEq, Eq, Hash, Clone, Copy)]
+    // enum Animations {
+    //     First,
+    //     Second,
+    // }
+
+    #[test]
+    fn animators_update() {
+        assert!(true)
+    }
+}
