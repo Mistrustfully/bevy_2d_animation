@@ -7,6 +7,7 @@ use crate::AnimationKey;
 
 #[derive(Component, Default, Debug)]
 pub struct Animator<AnimationKeys: AnimationKey> {
+    pub playing: bool,
     pub(crate) animations: HashMap<AnimationKeys, Animation>,
     pub(crate) current_animation: Option<AnimationKeys>,
     pub(crate) current_frame: usize,
@@ -20,11 +21,12 @@ impl<AnimationKeys: AnimationKey> Animator<AnimationKeys> {
             }
         }
         self.current_animation = Some(key);
+        self.playing = true;
     }
 
     pub fn stop_animation(&mut self) {
-        self.current_animation = None;
         self.current_frame = 0;
+        self.playing = false;
     }
 }
 
@@ -52,15 +54,43 @@ impl From<usize> for Frame {
     }
 }
 
+impl Frame {
+    pub fn flip_x(index: usize) -> Self {
+        Self {
+            index,
+            flip_x: true,
+            flip_y: false,
+        }
+    }
+
+    pub fn flip_y(index: usize) -> Self {
+        Self {
+            index,
+            flip_x: false,
+            flip_y: true,
+        }
+    }
+
+    pub fn new(index: usize, flip_x: bool, flip_y: bool) -> Self {
+        Self {
+            index,
+            flip_x,
+            flip_y,
+        }
+    }
+}
+
 pub struct AnimatorBuilder<AnimationKeys: AnimationKey> {
     spritesheet: Handle<TextureAtlas>,
+    duration: Duration,
     animations: HashMap<AnimationKeys, Animation>,
 }
 
 impl<AnimationKeys: AnimationKey> AnimatorBuilder<AnimationKeys> {
-    pub fn new(spritesheet: Handle<TextureAtlas>) -> Self {
+    pub fn new(spritesheet: Handle<TextureAtlas>, duration: Duration) -> Self {
         Self {
             spritesheet,
+            duration,
             animations: HashMap::new(),
         }
     }
@@ -70,11 +100,15 @@ impl<AnimationKeys: AnimationKey> AnimatorBuilder<AnimationKeys> {
         self
     }
 
+    pub fn set_duration(&mut self, duration: Duration) -> &mut Self {
+        self.duration = duration;
+        self
+    }
+
     pub fn register_animation<T: Into<Frame> + Copy>(
         &mut self,
         key: AnimationKeys,
         frames: Vec<T>,
-        duration: Duration,
     ) -> &mut Self {
         let converted_frames = frames
             .iter()
@@ -89,8 +123,8 @@ impl<AnimationKeys: AnimationKey> AnimatorBuilder<AnimationKeys> {
             key,
             Animation {
                 frames: converted_frames,
-                spritesheet: self.spritesheet.clone_weak(),
-                timer: Timer::new(duration, TimerMode::Repeating),
+                spritesheet: self.spritesheet.clone(),
+                timer: Timer::new(self.duration, TimerMode::Repeating),
             },
         );
         self
@@ -98,6 +132,7 @@ impl<AnimationKeys: AnimationKey> AnimatorBuilder<AnimationKeys> {
 
     pub fn build(&mut self) -> Animator<AnimationKeys> {
         Animator {
+            playing: false,
             animations: std::mem::take(&mut self.animations),
             current_animation: None,
             current_frame: 0,

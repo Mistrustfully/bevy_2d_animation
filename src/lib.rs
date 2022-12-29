@@ -2,12 +2,12 @@ pub mod components;
 mod systems;
 
 use bevy::prelude::*;
-use core::hash::Hash;
+use core::{fmt::Debug, hash::Hash};
 use std::marker::PhantomData;
 
 // Trait Alias
-pub trait AnimationKey: Eq + Hash + Send + Sync + Copy + 'static {}
-impl<T> AnimationKey for T where T: Eq + Hash + Send + Sync + Copy + 'static {}
+pub trait AnimationKey: Debug + Eq + Hash + Send + Sync + Copy + 'static {}
+impl<T> AnimationKey for T where T: Debug + Eq + Hash + Send + Sync + Copy + 'static {}
 
 pub struct AnimationPlayer<AnimationKeys: AnimationKey>(PhantomData<AnimationKeys>);
 impl<AnimationKeys: AnimationKey> Plugin for AnimationPlayer<AnimationKeys> {
