@@ -20,30 +20,19 @@ impl<AnimationKeys: AnimationKey> Plugin for AnimationPlayer<AnimationKeys> {
     }
 
     fn build(&self, app: &mut App) {
-        app.add_system(systems::update_animations::<AnimationKeys>)
-            .add_system(systems::update_spritesheets::<AnimationKeys>);
+        app.add_system_to_stage(
+            CoreStage::PreUpdate,
+            systems::update_animations::<AnimationKeys>,
+        )
+        .add_system_to_stage(
+            CoreStage::PostUpdate,
+            systems::update_spritesheets::<AnimationKeys>,
+        );
     }
 }
 
 impl<AnimationKeys: AnimationKey> AnimationPlayer<AnimationKeys> {
     pub fn new() -> Self {
         AnimationPlayer(PhantomData)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    // use crate::{components::AnimatorBuilder, AnimationPlayer};
-    // use bevy::prelude::*;
-
-    // #[derive(PartialEq, Eq, Hash, Clone, Copy)]
-    // enum Animations {
-    //     First,
-    //     Second,
-    // }
-
-    #[test]
-    fn animators_update() {
-        assert!(true)
     }
 }

@@ -41,8 +41,9 @@ fn create_sprite(
     )
     .register_animation(Animations::A, vec![0, 1, 2, 3])
     .register_animation(Animations::B, vec![4, 5, 6, 7])
-    .set_duration(Duration::from_secs(2))
+    .set_duration(Duration::from_secs_f32(0.25))
     .set_spritesheet(texture_atlas_handle_alt)
+    .set_priority(1)
     .register_animation(Animations::C, vec![0, 1, 2, 3])
     .build();
 
@@ -70,16 +71,22 @@ fn switch_animation(
     keys: Res<Input<KeyCode>>,
     mut query: Query<(&mut Animator<Animations>, &mut MainSprite)>,
 ) {
-    if keys.just_pressed(KeyCode::Space) {
-        for (mut animator, mut main_sprite) in query.iter_mut() {
+    for (mut animator, mut main_sprite) in query.iter_mut() {
+        if keys.just_pressed(KeyCode::Space) {
             let swapped = match main_sprite.current {
                 Animations::A => Animations::B,
-                Animations::B => Animations::C,
-                Animations::C => Animations::A,
+                Animations::B => Animations::A,
+                Animations::C => Animations::C,
             };
 
             animator.play_animation(swapped);
             main_sprite.current = swapped
+        }
+
+        if keys.pressed(KeyCode::Z) {
+            animator.play_animation(Animations::C)
+        } else {
+            animator.stop_animation_by_key(Animations::C)
         }
     }
 }

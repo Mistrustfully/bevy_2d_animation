@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use bevy::prelude::*;
 use bevy_2d_animation::{
-    components::{Animator, AnimatorBuilder, Frame},
+    components::{Animator, AnimatorBuilder, Frame, RepeatMode},
     AnimationPlayer,
 };
 
@@ -28,19 +28,22 @@ fn create_sprite(
     let texture_atlas = TextureAtlas::from_grid(texture_handle, size, 4, 2, None, None);
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
-    let mut animator =
-        AnimatorBuilder::<Animations>::new(texture_atlas_handle.clone(), Duration::from_secs(1))
-            .register_animation(Animations::A, vec![0, 1, 2, 3])
-            .register_animation(
-                Animations::B,
-                vec![
-                    Frame::flip_x(4),
-                    Frame::flip_x(5),
-                    Frame::flip_x(6),
-                    Frame::flip_x(7),
-                ],
-            )
-            .build();
+    let mut animator = AnimatorBuilder::<Animations>::new(
+        texture_atlas_handle.clone(),
+        Duration::from_secs(1),
+        RepeatMode::Loop,
+    )
+    .register_animation(Animations::A, vec![0, 1, 2, 3])
+    .register_animation(
+        Animations::B,
+        vec![
+            Frame::flip_x(4),
+            Frame::flip_x(5),
+            Frame::flip_x(6),
+            Frame::flip_x(7),
+        ],
+    )
+    .build();
 
     animator.play_animation(Animations::A);
 
