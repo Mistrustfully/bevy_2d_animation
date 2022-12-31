@@ -30,7 +30,7 @@ pub(crate) fn update_animations<T: AnimationKey>(
                             animation.current_frame = 0;
                         }
                         RepeatMode::Pause => {
-                            animation.playing = false;
+                            // animation.playing = false;
                         }
                     };
 
