@@ -47,7 +47,7 @@ fn create_sprite(
     .register_animation(Animations::C, vec![0, 1, 2, 3])
     .build();
 
-    animator.play_animation(Animations::A);
+    animator.play_animation(&Animations::A);
 
     commands.spawn((
         SpriteSheetBundle {
@@ -79,14 +79,14 @@ fn switch_animation(
                 Animations::C => Animations::C,
             };
 
-            animator.play_animation(swapped);
+            animator.play_animation(&swapped);
             main_sprite.current = swapped
         }
 
         if keys.pressed(KeyCode::Z) {
-            animator.play_animation(Animations::C)
+            animator.play_animation(&Animations::C)
         } else {
-            animator.stop_animation_by_key(Animations::C)
+            animator.stop_animation_by_key(&Animations::C)
         }
     }
 }

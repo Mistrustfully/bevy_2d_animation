@@ -45,7 +45,7 @@ fn create_sprite(
     )
     .build();
 
-    animator.play_animation(Animations::A);
+    animator.play_animation(&Animations::A);
 
     commands.spawn((
         SpriteSheetBundle {
@@ -76,7 +76,7 @@ fn switch_animation(
                 Animations::B => Animations::A,
             };
 
-            animator.play_animation(swapped);
+            animator.play_animation(&swapped);
             main_sprite.current = swapped
         }
     }
