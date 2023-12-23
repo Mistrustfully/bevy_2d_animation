@@ -24,11 +24,11 @@ pub struct Animator<AnimationKeys: AnimationKey> {
 
 impl<AnimationKeys: AnimationKey> Animator<AnimationKeys> {
     pub fn play_animation(&mut self, key: &AnimationKeys) {
-        if let Some(animation) = self.animations.get(&key) {
+        if let Some(animation) = self.animations.get(key) {
             self.stop_animation_by_priority(animation.priority);
         }
 
-        if let Some(animation) = self.animations.get_mut(&key) {
+        if let Some(animation) = self.animations.get_mut(key) {
             animation.playing = true;
         }
     }
@@ -49,7 +49,7 @@ impl<AnimationKeys: AnimationKey> Animator<AnimationKeys> {
     }
 
     pub fn stop_animation_by_priority(&mut self, priority: usize) {
-        for (_, mut animation) in self.animations.iter_mut() {
+        for (_, animation) in self.animations.iter_mut() {
             if animation.priority == priority {
                 animation.playing = false
             }
@@ -62,9 +62,9 @@ impl<AnimationKeys: AnimationKey> Animator<AnimationKeys> {
             .max_by(|a, b| {
                 let playing_order = a.1.playing.cmp(&b.1.playing);
                 if matches!(playing_order, std::cmp::Ordering::Equal) {
-                    return a.1.priority.cmp(&b.1.priority);
+                    a.1.priority.cmp(&b.1.priority)
                 } else {
-                    return playing_order;
+                    playing_order
                 }
             })
             .map(|(_, v)| v)
@@ -176,7 +176,7 @@ impl<AnimationKeys: AnimationKey> AnimatorBuilder<AnimationKeys> {
         let converted_frames = frames
             .iter()
             .map(|v| {
-                let cloned = v.clone();
+                let cloned = *v;
                 let frame: Frame = cloned.into();
                 frame
             })

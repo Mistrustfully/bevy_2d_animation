@@ -9,7 +9,7 @@ pub(crate) fn update_animations<T: AnimationKey>(
     time: Res<Time>,
 ) {
     for mut animator in query.iter_mut() {
-        for (_, mut animation) in animator.animations.iter_mut() {
+        for (_, animation) in animator.animations.iter_mut() {
             if !animation.playing {
                 continue;
             };

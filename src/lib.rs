@@ -20,19 +20,13 @@ impl<AnimationKeys: AnimationKey> Plugin for AnimationPlayer<AnimationKeys> {
     }
 
     fn build(&self, app: &mut App) {
-        app.add_system_to_stage(
-            CoreStage::PreUpdate,
-            systems::update_animations::<AnimationKeys>,
-        )
-        .add_system_to_stage(
-            CoreStage::PostUpdate,
-            systems::update_spritesheets::<AnimationKeys>,
-        );
+        app.add_systems(PreUpdate, systems::update_animations::<AnimationKeys>)
+            .add_systems(PostUpdate, systems::update_spritesheets::<AnimationKeys>);
     }
 }
 
-impl<AnimationKeys: AnimationKey> AnimationPlayer<AnimationKeys> {
-    pub fn new() -> Self {
-        AnimationPlayer(PhantomData)
+impl<AnimationKeys: AnimationKey> Default for AnimationPlayer<AnimationKeys> {
+    fn default() -> Self {
+        Self(PhantomData)
     }
 }

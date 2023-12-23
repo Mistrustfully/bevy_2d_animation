@@ -95,9 +95,9 @@ fn main() {
     let mut app = App::new();
 
     app.add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
-        .add_plugin(AnimationPlayer::<Animations>::new());
-    app.add_startup_system(create_sprite)
-        .add_system(switch_animation);
+        .add_plugins(AnimationPlayer::<Animations>::default());
+    app.add_systems(Startup, create_sprite)
+        .add_systems(Update, switch_animation);
 
     app.run();
 }
